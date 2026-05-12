@@ -1,10 +1,8 @@
 # Molecular_Dynamic_-_Simulation
-MD Simulation
+## MD Simulation - http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html
 
-http://www.mdtutorials.com/gmx/lysozyme/01_pdb2gmx.html
-
-Gromacs File Formats
-
+### Gromacs File Formats
+´´´
 .pdb file ---- Protein database (Cordinate File)
 .gro file ---- Gromacs file (Cordinate File)
 .top file ---- Description File(topology file) --- Whole system
@@ -17,7 +15,7 @@ Gromacs File Formats
 .trr file ---- Trajectory file
 .xtc file ---- Extended trajectory file (compressed)
 .cpt file ---- checkpoint file
-
+´´´
 
 .pdb ---> .gro
 
