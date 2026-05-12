@@ -17,41 +17,53 @@
 .cpt file ---- checkpoint file
 ```
 
-.pdb ---> .gro
 
-MD Simulation Steps for Lysozyme Tutorial
+## MD Simulation Steps for Lysozyme Tutorial
 
-Create Initial state
-Generate Topology for Protein
-add box and solvation to the System
-Add Ions to the solved system
+- Create Initial state
+- Generate Topology for Protein
+- add box and solvation to the System
+- Add Ions to the solved system
 
-Introduction to interation poteintials
-4. Energy Minimazation
+Introduction to interaction potentials
+4. Energy Minimization
 
 Predict how the particle moves
-5. Equilibrationof System
-6. MD Prodution run
+5. Equilibration of System
+6. MD Production run
 
 
-1AKI.pdb
-clean the molecule
-grep -v HOH 1aki.pdb > 1aki_clean.pdb
+## Download the 1AKI.pdb
 
+* clean the molecule
+
+```
+grep -v HOH 1aki.pdb > 1aki_clean.pdb 
+```
+```
 gmx pdb2gmx -f 1AKI_clean.pdb -o 1AKI_processed.gro -water tip3p 
-
+```
 you will get the 15 forcefilled types --- take 15 OPLS
 
 add the cubic box
+```
+
 gmx editconf -f 1aki_processed.gro -o 1aki_nexbox.gro -c -d 1.0 -bt cubic
+```
 
 Solvation
+```
+
 gmx solvate -cp 1aki_nexbox.gro -cs spc216.gro -o 1aki_solv.gro -p topol.top
+```
 
 mdtutorials.com/gmx/lysozyme/04_ions.html
 
 Adding ions
 create ion.mdp file --> nano ion.mdp then add following to the file
+
+```
+
 ----------------------------------------------------------------------------------------------------
 ; ions.mdp - used as input into grompp to generate ions.tpr
 ; Parameters describing what to do, when to stop and what to save
@@ -69,21 +81,28 @@ rcoulomb        = 1.0       ; Short-range electrostatic cut-off
 rvdw            = 1.0       ; Short-range Van der Waals cut-off
 pbc             = xyz       ; Periodic Boundary Conditions in all 3 dimensions
 ------------------------------------------------------------------------------------------------------
+```
 
 To Assemble your .tpr file with the following:
+```
 gmx grompp -f inputs/ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr
 gmx grompp -f inputs/ions.mdp -c 1aki_solv.gro -p topol.top -o ions.tpr
 
+```
 
 Now we have an atomic-level description of our system in the binary file ions.tpr. We will pass this file to genion:
+```
 
 gmx genion -s ions.tpr -o 1aki_solv_ions.gro -p topol.top -pname NA -nname CL -neutral
+```
 
 will asked to add continues Group - add Group 13 (SOL file)
 
 Next Level - Energy Minimization
 
 create nano minim.mdp file using nano minim.mdp then add following
+```
+
 --------------------------------------------------------------------------------------------
 ; minim.mdp - used as input into grompp to generate em.tpr
 ; Parameters describing what to do, when to stop and what to save
@@ -101,18 +120,24 @@ rcoulomb        = 1.0       ; Short-range electrostatic cut-off
 rvdw            = 1.0       ; Short-range Van der Waals cut-off
 pbc             = xyz       ; Periodic Boundary Conditions in all 3 dimensions
 --------------------------------------------------------------------------------------------
+```
+```
 
 gmx grompp -f inputs/minim.mdp -c 1aki_solv_ions.gro -p topol.top -o em.tpr
+```
 
 Make sure you have been updating your topol.top file when running genbox and genion, or else you will get lots of nasty error messages ("number of coordinates in coordinate file does not match topology," etc).
 
 We are now ready to invoke mdrun to carry out the EM:
-
+```
 gmx mdrun -v -deffnm em
+```
 
 Let's do a bit of analysis. The em.edr file contains all of the energy terms that GROMACS collects during EM. You can analyze any .edr file using the GROMACS energy module:
+```
 
 gmx energy -f em.edr -o potential.xvg
+```
 
 then select 10 by using 10 0 command
 
@@ -120,8 +145,10 @@ to visualize  xmgrace potential.xvg
 
 Predict how the particle Moves
 Equilibration of System
+```
 
 nano nvt.mdp file
+
 ----------------------------------------------------------------------------------------------------------
 title                   = OPLS Lysozyme NVT equilibration 
 define                  = -DPOSRES  ; position restrain the protein
@@ -168,6 +195,7 @@ gen_vel                 = yes       ; assign velocities from Maxwell distributio
 gen_temp                = 298       ; temperature for Maxwell distribution
 gen_seed                = -1        ; generate a random seed
 ----------------------------------------------------------------------------------------------------------
+```
 
 The first phase is conducted under an NVT ensemble (constant Number of particles, Volume, and Temperature).
 
@@ -187,6 +215,8 @@ to check the temperature file xmgrace temperature.xvg
 
 
 Create nano npt.mdp file
+```
+
 -------------------------------------------------------------------------------------------------------
 
 title                   = OPLS Lysozyme NPT equilibration
@@ -238,20 +268,25 @@ pbc                     = xyz       ; 3-D PBC
 gen_vel                 = no        ; Velocity generation is off
 
 --------------------------------------------------------------------------------------------------------------
+```
 
 A few other changes:
 NVT equilibration phase
 
+```
 
 gmx grompp -f inputs/npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
 
 gmx mdrun -deffnm npt
 
+```
 
 
 Let's analyze the pressure progression, again using energy:
+```
 
 gmx energy -f npt.edr -o pressure.xvg
+```
 
 
 to check the pressure file xmgrace pressure.xvg
@@ -259,12 +294,17 @@ to check the pressure file xmgrace pressure.xvg
 
 
 Let's take a look at density as well, this time using energy and entering "23 0" at the prompt.
+```
 
 gmx energy -f npt.edr -o density.xvg
+```
 
 Production MD Simulation
 
 create nano md.mdp and paste the following
+
+```
+
 ----------------------------------------------------------------------------------------------------
 title                   = OPLS Lysozyme MD run
 ; Run parameters
@@ -316,19 +356,24 @@ pbc                     = xyz       ; 3-D PBC
 gen_vel                 = no        ; Velocity generation is off
 
 ----------------------------------------------------------------------------------------------------------------
+```
+
 We will run a 10-ns MD simulation, the script for which can be found here.
 
+```
 
 gmx grompp -f inputs/md.mdp -c npt.gro -t npt.cpt -p topol.top -o md_0_10.tpr
+
+```
+
 Now, execute mdrun:
+```
 
 gmx mdrun -deffnm md_0_10
 
+```
 
-
-
-
-Protein_Ligand MD Simulation
+### Protein_Ligand MD Simulation
 
 
 Create Initial state
@@ -345,4 +390,3 @@ Predict how the particle Moves
 5.Equilibration of System
 6.MD Product run
 
-3HBT Protein download the
