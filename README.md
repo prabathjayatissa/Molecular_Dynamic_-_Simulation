@@ -142,16 +142,18 @@ Let's do a bit of analysis. The em.edr file contains all of the energy terms tha
 gmx energy -f em.edr -o potential.xvg
 ```
 
-then select 10 by using 10 0 command
+Then select 10 by using the 10 0 command
 
-to visualize  xmgrace potential.xvg
+to visualize  the Xmgrace potential.xvg
 
 Predict how the particle Moves
-Equilibration of System
+Equilibration of the System
+
+### Create nvt.mdp file
 ```
-
 nano nvt.mdp file
-
+```
+````
 ----------------------------------------------------------------------------------------------------------
 title                   = OPLS Lysozyme NVT equilibration 
 define                  = -DPOSRES  ; position restrain the protein
@@ -199,25 +201,30 @@ gen_temp                = 298       ; temperature for Maxwell distribution
 gen_seed                = -1        ; generate a random seed
 ----------------------------------------------------------------------------------------------------------
 ```
-
+````
 The first phase is conducted under an NVT ensemble (constant Number of particles, Volume, and Temperature).
 
 We will call grompp and mdrun just as we did at the EM step:
-
+````
 gmx grompp -f inputs/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
 
 gmx mdrun -deffnm nvt
-
+````
 
 Let's analyze the temperature progression, again using energy:
 
+````
 gmx energy -f nvt.edr -o temperature.xvg
-
+````
 
 to check the temperature file xmgrace temperature.xvg
 
 
-Create nano npt.mdp file
+Create npt.mdp file
+````
+nano npt.mdp
+````
+Add the following
 ```
 
 -------------------------------------------------------------------------------------------------------
@@ -279,10 +286,12 @@ NVT equilibration phase
 ```
 
 gmx grompp -f inputs/npt.mdp -c nvt.gro -r nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
+````
+````
 
 gmx mdrun -deffnm npt
 
-```
+````
 
 
 Let's analyze the pressure progression, again using energy:
@@ -292,7 +301,7 @@ gmx energy -f npt.edr -o pressure.xvg
 ```
 
 
-to check the pressure file xmgrace pressure.xvg
+To check the pressure file xmgrace pressure.xvg
 
 
 
@@ -304,8 +313,11 @@ gmx energy -f npt.edr -o density.xvg
 
 Production MD Simulation
 
-create nano md.mdp and paste the following
+Create nano md.mdp and paste the following
 
+````
+nano md.mdp
+````
 ```
 
 ----------------------------------------------------------------------------------------------------
@@ -377,7 +389,6 @@ gmx mdrun -deffnm md_0_10
 ```
 
 ### Protein_Ligand MD Simulation
-
 
 Create Initial state
 1.Generate Topology for Protein
