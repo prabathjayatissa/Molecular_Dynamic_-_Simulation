@@ -34,7 +34,7 @@ Predict how the particle moves
 
 ##' Download the 1AKI.pdb
 
-### clean the molecule
+### Clean the molecule
 
 ```
 grep -v HOH 1aki.pdb > 1aki_clean.pdb 
@@ -59,8 +59,9 @@ gmx solvate -cp 1aki_nexbox.gro -cs spc216.gro -o 1aki_solv.gro -p topol.top
 
 ### Adding ions
 
-create ion.mdp file --> nano ion.mdp then add the following to the file
+create ions.mdp file --> nano ion.mdp then add the following to the file
 ````
+nano ions.mdp
 ````
 ```
 ----------------------------------------------------------------------------------------------------
@@ -82,26 +83,28 @@ pbc             = xyz       ; Periodic Boundary Conditions in all 3 dimensions
 ------------------------------------------------------------------------------------------------------
 ```
 
-To Assemble your .tpr file with the following:
+### To Assemble your .tpr file with the following:
 ```
 gmx grompp -f inputs/ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr
 gmx grompp -f inputs/ions.mdp -c 1aki_solv.gro -p topol.top -o ions.tpr
 
 ```
 
-Now we have an atomic-level description of our system in the binary file ions.tpr. We will pass this file to genion:
+### Now we have an atomic-level description of our system in the binary file ions.tpr. We will pass this file to genion:
 ```
 
 gmx genion -s ions.tpr -o 1aki_solv_ions.gro -p topol.top -pname NA -nname CL -neutral
 ```
 
-will asked to add continues Group - add Group 13 (SOL file)
+### Will be asked to add continues Group - add Group 13 (SOL file)
 
-Next Level - Energy Minimization
+## Next Level - Energy Minimization
 
 create nano minim.mdp file using nano minim.mdp then add following
-```
-
+````
+nano minim.mdp
+````
+````
 --------------------------------------------------------------------------------------------
 ; minim.mdp - used as input into grompp to generate em.tpr
 ; Parameters describing what to do, when to stop and what to save
@@ -119,7 +122,8 @@ rcoulomb        = 1.0       ; Short-range electrostatic cut-off
 rvdw            = 1.0       ; Short-range Van der Waals cut-off
 pbc             = xyz       ; Periodic Boundary Conditions in all 3 dimensions
 --------------------------------------------------------------------------------------------
-```
+````
+### Execute the following command 
 ```
 
 gmx grompp -f inputs/minim.mdp -c 1aki_solv_ions.gro -p topol.top -o em.tpr
