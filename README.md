@@ -20,12 +20,12 @@
 
 ## MD Simulation Steps for Lysozyme Tutorial
 
-- Create Initial state
-- Generate Topology for Protein
-- add box and solvation to the System
-- Add Ions to the solved system
+### Create Initial state
+1. Generate Topology for Protein
+2. Add box and solvation to the System
+3. Add Ions to the solved system
 
-Introduction to interaction potentials
+### Introduction to interaction potentials
 4. Energy Minimization
 
 Predict how the particle moves
