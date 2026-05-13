@@ -3,12 +3,12 @@
 
 ### Gromacs File Formats
 ```
-.pdb file ---- Protein database (Cordinate File)
-.gro file ---- Gromacs file (Cordinate File)
+.pdb file ---- Protein database (Coordinate File)
+.gro file ---- Gromacs file (Coordinate File)
 .top file ---- Description File(topology file) --- Whole system
 .itp file ---- Description file(include topology) ---- Subsystem
 .ndx file ---- index file
-.mdp file ---- molecular dynamic Parameter file
+.mdp file ---- molecular dynamics Parameter file
 .tpr file ---- portable run Input file (cordinate + topology + parameter)
 .log file ---- log file
 .der file ---- Energy file
@@ -32,10 +32,9 @@ Predict how the particle moves
 5. Equilibration of System
 6. MD Production run
 
+##' Download the 1AKI.pdb
 
-## Download the 1AKI.pdb
-
-* clean the molecule
+### clean the molecule
 
 ```
 grep -v HOH 1aki.pdb > 1aki_clean.pdb 
@@ -43,27 +42,27 @@ grep -v HOH 1aki.pdb > 1aki_clean.pdb
 ```
 gmx pdb2gmx -f 1AKI_clean.pdb -o 1AKI_processed.gro -water tip3p 
 ```
-you will get the 15 forcefilled types --- take 15 OPLS
+You will get the 15 force-filled ---> take 15 OPLS
 
-add the cubic box
+### Add the cubic box
+
 ```
 
 gmx editconf -f 1aki_processed.gro -o 1aki_nexbox.gro -c -d 1.0 -bt cubic
 ```
 
-Solvation
+### Solvation
 ```
 
 gmx solvate -cp 1aki_nexbox.gro -cs spc216.gro -o 1aki_solv.gro -p topol.top
 ```
 
-mdtutorials.com/gmx/lysozyme/04_ions.html
+### Adding ions
 
-Adding ions
-create ion.mdp file --> nano ion.mdp then add following to the file
-
+create ion.mdp file --> nano ion.mdp then add the following to the file
+````
+````
 ```
-
 ----------------------------------------------------------------------------------------------------
 ; ions.mdp - used as input into grompp to generate ions.tpr
 ; Parameters describing what to do, when to stop and what to save
